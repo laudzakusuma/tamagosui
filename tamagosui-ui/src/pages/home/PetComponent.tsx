@@ -103,7 +103,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
   if (isLoadingGameBalance || !gameBalance)
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <h1 className="text-2xl">Loading Game Rules...</h1>
+        <h1 className="text-2xl">Memuat Aturan Game...</h1>
       </div>
     );
 
@@ -133,9 +133,9 @@ export default function PetComponent({ pet }: PetDashboardProps) {
 
   return (
     <TooltipProvider>
-      <Card className="w-full max-w-sm shadow-hard border-2 border-primary">
+      <Card className="w-full max-w-sm shadow-lg border-2 border-primary transform transition-transform hover:scale-105">
         <CardHeader className="text-center">
-          <CardTitle className="text-4xl">{pet.name}</CardTitle>
+          <CardTitle className="text-4xl font-bold">{pet.name}</CardTitle>
           <CardDescription className="text-lg">
             Level {pet.game_data.level}
           </CardDescription>
@@ -147,7 +147,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
             <img
               src={pet.image_url}
               alt={pet.name}
-              className="w-36 h-36 rounded-full border-4 border-primary/20 object-cover"
+              className="w-36 h-36 rounded-full border-4 border-primary/20 object-cover animate-float"
             />
           </div>
 
@@ -160,7 +160,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
                   <span className="font-bold">{pet.game_data.coins}</span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Coins</p>
+                  <p>Koin</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -169,7 +169,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
                   <StarIcon className="w-5 h-5 text-purple-500" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Experience Points (XP)</p>
+                  <p>Poin Pengalaman (XP)</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -178,17 +178,17 @@ export default function PetComponent({ pet }: PetDashboardProps) {
             <div className="space-y-2">
               <StatDisplay
                 icon={<BatteryIcon className="text-green-500" />}
-                label="Energy"
+                label="Energi"
                 value={displayStats.energy}
               />
               <StatDisplay
                 icon={<HeartIcon className="text-pink-500" />}
-                label="Happiness"
+                label="Kebahagiaan"
                 value={displayStats.happiness}
               />
               <StatDisplay
                 icon={<DrumstickIcon className="text-orange-500" />}
-                label="Hunger"
+                label="Kelaparan"
                 value={displayStats.hunger}
               />
             </div>
@@ -198,14 +198,14 @@ export default function PetComponent({ pet }: PetDashboardProps) {
             <Button
               onClick={() => mutateLevelUp({ petId: pet.id })}
               disabled={!canLevelUp || isAnyActionPending}
-              className="w-full bg-green-600 hover:bg-green-700"
+              className="w-full bg-green-600 hover:bg-green-700 transform transition-transform hover:scale-105"
             >
               {isLevelingUp ? (
                 <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <ChevronUpIcon className="mr-2 h-4 w-4" />
               )}
-              Level Up!
+              Naik Level!
             </Button>
           </div>
 
@@ -214,14 +214,14 @@ export default function PetComponent({ pet }: PetDashboardProps) {
               onClick={() => mutateFeedPet({ petId: pet.id })}
               disabled={!canFeed || isAnyActionPending}
               isPending={isFeeding}
-              label="Feed"
+              label="Beri Makan"
               icon={<DrumstickIcon />}
             />
             <ActionButton
               onClick={() => mutatePlayWithPet({ petId: pet.id })}
               disabled={!canPlay || isAnyActionPending}
               isPending={isPlaying}
-              label="Play"
+              label="Main"
               icon={<PlayIcon />}
             />
             <div className="col-span-2">
@@ -229,7 +229,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
                 onClick={() => mutateWorkForCoins({ petId: pet.id })}
                 disabled={!canWork || isAnyActionPending}
                 isPending={isWorking}
-                label="Work"
+                label="Bekerja"
                 icon={<BriefcaseIcon />}
               />
             </div>
@@ -239,27 +239,27 @@ export default function PetComponent({ pet }: PetDashboardProps) {
               <Button
                 onClick={() => mutateWakeUpPet({ petId: pet.id })}
                 disabled={isWakingUp}
-                className="w-full bg-yellow-500 hover:bg-yellow-600"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 transform transition-transform hover:scale-105"
               >
                 {isWakingUp ? (
                   <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <ZapIcon className="mr-2 h-4 w-4" />
                 )}{" "}
-                Wake Up!
+                Bangun!
               </Button>
             ) : (
               <Button
                 onClick={() => mutateLetPetSleep({ petId: pet.id })}
                 disabled={isAnyActionPending}
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 transform transition-transform hover:scale-105"
               >
                 {isSleeping ? (
                   <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <BedIcon className="mr-2 h-4 w-4" />
                 )}{" "}
-                Sleep
+                Tidur
               </Button>
             )}
           </div>
