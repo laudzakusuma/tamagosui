@@ -44,7 +44,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-[var(--border)];
   }
   body, html {
     @apply bg-background text-foreground antialiased;
@@ -76,18 +76,4 @@
   background: linear-gradient(-45deg, #fbcfe8, #a78bfa, #818cf8, #93c5fd);
   background-size: 400% 400%;
   animation: gradient-shift 20s ease infinite;
-}
-
-@layer base {
-  /* Semua komponen default kotak */
-  .rounded-none,
-  button,
-  input,
-  .card,
-  .tooltip,
-  .dropdown,
-  .select,
-  .textarea {
-    border-radius: 0 !important;
-  }
 }

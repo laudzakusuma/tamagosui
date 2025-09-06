@@ -21,7 +21,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { StatDisplay } from "./components/StatDisplay";
-import { ActionButton } from "./components/ActionButton";
 import { WardrobeManager } from "./components/Wardrobe";
 import { useMutateCheckAndLevelUp } from "@/hooks/useMutateCheckLevel";
 import { useMutateFeedPet } from "@/hooks/useMutateFeedPet";
@@ -38,6 +37,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
   const { data: gameBalance, isLoading: isLoadingGameBalance } = useQueryGameBalance();
   const [displayStats, setDisplayStats] = useState(pet.stats);
 
+  // Hooks untuk aksi... (tidak ada perubahan di sini)
   const { mutate: mutateFeedPet, isPending: isFeeding } = useMutateFeedPet();
   const { mutate: mutatePlayWithPet, isPending: isPlaying } = useMutatePlayWithPet();
   const { mutate: mutateWorkForCoins, isPending: isWorking } = useMutateWorkForCoins();
@@ -45,23 +45,16 @@ export default function PetComponent({ pet }: PetDashboardProps) {
   const { mutate: mutateWakeUpPet, isPending: isWakingUp } = useMutateWakeUpPet();
   const { mutate: mutateLevelUp, isPending: isLevelingUp } = useMutateCheckAndLevelUp();
 
-  useEffect(() => {
-    setDisplayStats(pet.stats);
-  }, [pet.stats]);
+  useEffect(() => { setDisplayStats(pet.stats); }, [pet.stats]);
 
   useEffect(() => {
     if (pet.isSleeping && !isWakingUp && gameBalance) {
       const intervalId = setInterval(() => {
-        setDisplayStats((prev) => {
-          const energyPerSecond = 1000 / Number(gameBalance.sleep_energy_gain_ms);
-          const hungerLossPerSecond = 1000 / Number(gameBalance.sleep_hunger_loss_ms);
-          const happinessLossPerSecond = 1000 / Number(gameBalance.sleep_happiness_loss_ms);
-          return {
-            energy: Math.min(gameBalance.max_stat, prev.energy + energyPerSecond),
-            hunger: Math.max(0, prev.hunger - hungerLossPerSecond),
-            happiness: Math.max(0, prev.happiness - happinessLossPerSecond),
-          };
-        });
+        setDisplayStats((prev) => ({
+          energy: Math.min(gameBalance.max_stat, prev.energy + (1000 / Number(gameBalance.sleep_energy_gain_ms))),
+          hunger: Math.max(0, prev.hunger - (1000 / Number(gameBalance.sleep_hunger_loss_ms))),
+          happiness: Math.max(0, prev.happiness - (1000 / Number(gameBalance.sleep_happiness_loss_ms))),
+        }));
       }, 1000);
       return () => clearInterval(intervalId);
     }
@@ -69,166 +62,72 @@ export default function PetComponent({ pet }: PetDashboardProps) {
 
   if (isLoadingGameBalance || !gameBalance) {
     return (
-      <div className="animate-float text-center p-8 shadow-2xl bg-white/80 backdrop-blur-md rounded-none">
-        <h2 className="text-2xl font-bold text-gray-800">Memuat Aturan Game...</h2>
+      <div className="w-80 text-center p-8 bg-white/80 backdrop-blur-md rounded-lg animate-fade-in">
+        <h2 className="text-xl font-bold">Memuat...</h2>
       </div>
     );
   }
+  
+  const isAnyActionPending = isFeeding || isPlaying || isWorking || isSleeping || isWakingUp || isLevelingUp;
+  const canFeed = !pet.isSleeping && pet.stats.hunger < gameBalance.max_stat && pet.game_data.coins >= Number(gameBalance.feed_coins_cost);
+  const canPlay = !pet.isSleeping && pet.stats.energy >= gameBalance.play_energy_loss && pet.stats.hunger >= gameBalance.play_hunger_loss;
+  const canWork = !pet.isSleeping && pet.stats.energy >= gameBalance.work_energy_loss && pet.stats.happiness >= gameBalance.work_happiness_loss && pet.stats.hunger >= gameBalance.work_hunger_loss;
+  const canLevelUp = !pet.isSleeping && pet.game_data.experience >= pet.game_data.level * Number(gameBalance.exp_per_level);
 
-  const isAnyActionPending =
-    isFeeding || isPlaying || isWorking || isSleeping || isWakingUp || isLevelingUp;
-  const canFeed =
-    !pet.isSleeping &&
-    pet.stats.hunger < gameBalance.max_stat &&
-    pet.game_data.coins >= Number(gameBalance.feed_coins_cost);
-  const canPlay =
-    !pet.isSleeping &&
-    pet.stats.energy >= gameBalance.play_energy_loss &&
-    pet.stats.hunger >= gameBalance.play_hunger_loss;
-  const canWork =
-    !pet.isSleeping &&
-    pet.stats.energy >= gameBalance.work_energy_loss &&
-    pet.stats.happiness >= gameBalance.work_happiness_loss &&
-    pet.stats.hunger >= gameBalance.work_hunger_loss;
-  const canLevelUp =
-    !pet.isSleeping &&
-    pet.game_data.experience >= pet.game_data.level * Number(gameBalance.exp_per_level);
+  const actionButtonClass = "w-full h-9 text-xs font-bold rounded-md shadow-sm border transition-transform transform hover:scale-105";
+
 
   return (
     <TooltipProvider>
       <div className="animate-float">
-        <Card className="w-80 min-h-[600px] shadow-2xl border-4 border-white/60 bg-white/90 backdrop-blur-lg overflow-hidden rounded-none">
-          <CardContent className="p-0">
-            {/* Header */}
-            <div className="relative bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 p-6 h-60 flex flex-col items-center justify-center">
-              <img
-                src={pet.image_url}
-                alt={pet.name}
-                className="w-32 h-32 border-4 border-white object-cover shadow-xl bg-white/20 rounded-none"
-              />
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 text-lg font-black shadow-lg transform translate-y-1/2 border-2 border-white/30 rounded-none">
-                Level {pet.game_data.level}
+        <Card className="w-80 shadow-lg border-2 border-white/30 bg-white/80 backdrop-blur-lg rounded-xl animate-fade-in">
+          <CardContent className="p-3 space-y-3">
+            {/* Top Section */}
+            <div className="flex gap-3 items-center">
+              <div className="w-24 h-24 flex-shrink-0 bg-purple-200 p-1.5 rounded-md shadow-inner">
+                <img src={pet.image_url} alt={pet.name} className="w-full h-full object-cover rounded-sm" />
+              </div>
+              <div className="flex flex-col flex-1 space-y-2">
+                <div>
+                  <h2 className="text-xl font-black text-gray-800 leading-tight">{pet.name}</h2>
+                  <p className="text-xs font-bold text-purple-700 bg-purple-100 px-2 py-0.5 inline-block rounded">Level {pet.game_data.level}</p>
+                </div>
+                 <div className="flex justify-between items-center text-xs">
+                    <span className="flex items-center gap-1 font-bold bg-yellow-100 px-2 py-0.5 rounded"><CoinsIcon className="w-3 h-3 text-yellow-600" /> {pet.game_data.coins}</span>
+                    <span className="flex items-center gap-1 font-bold bg-purple-100 px-2 py-0.5 rounded">{pet.game_data.experience} <StarIcon className="w-3 h-3 text-purple-600" /></span>
+                </div>
               </div>
             </div>
+            
+            {/* Stats Section */}
+            <div className="space-y-1.5">
+              <StatDisplay icon={<BatteryIcon className="w-4 h-4 text-green-500" />} label="Energi" value={displayStats.energy} />
+              <StatDisplay icon={<HeartIcon className="w-4 h-4 text-pink-500" />} label="Bahagia" value={displayStats.happiness} />
+              <StatDisplay icon={<DrumstickIcon className="w-4 h-4 text-orange-500" />} label="Lapar" value={displayStats.hunger} />
+            </div>
 
-            {/* Content */}
-            <div className="px-6 py-8 space-y-6">
-              <h2 className="text-3xl font-black text-gray-800 text-center -mt-2 mb-6">
-                {pet.name}
-              </h2>
+            {/* Actions Grid */}
+            <div className="grid grid-cols-3 gap-2 pt-1">
+               <Button onClick={() => mutateFeedPet({ petId: pet.id })} disabled={!canFeed || isAnyActionPending} className={actionButtonClass}>
+                {isFeeding ? <Loader2Icon className="w-4 h-4 animate-spin" /> : <DrumstickIcon className="w-4 h-4"/>}
+              </Button>
+               <Button onClick={() => mutatePlayWithPet({ petId: pet.id })} disabled={!canPlay || isAnyActionPending} className={actionButtonClass}>
+                {isPlaying ? <Loader2Icon className="w-4 h-4 animate-spin" /> : <PlayIcon className="w-4 h-4"/>}
+              </Button>
+               <Button onClick={() => mutateWorkForCoins({ petId: pet.id })} disabled={!canWork || isAnyActionPending} className={actionButtonClass}>
+                {isWorking ? <Loader2Icon className="w-4 h-4 animate-spin" /> : <BriefcaseIcon className="w-4 h-4"/>}
+              </Button>
 
-              {/* Stats box */}
-              <div className="p-5 bg-gradient-to-br from-white/60 to-white/80 space-y-4 shadow-lg border-2 border-white/40 rounded-none">
-                <div className="flex justify-around items-center text-lg mb-4">
-                  <Tooltip>
-                    <TooltipTrigger className="flex items-center gap-2 font-black text-xl text-gray-800 bg-yellow-100 px-3 py-2 rounded-none">
-                      <CoinsIcon className="w-6 h-6 text-yellow-600" />
-                      {pet.game_data.coins}
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Koin</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger className="flex items-center gap-2 font-black text-xl text-gray-800 bg-purple-100 px-3 py-2 rounded-none">
-                      {pet.game_data.experience}
-                      <StarIcon className="w-6 h-6 text-purple-600" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>XP</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <div className="space-y-3">
-                  <StatDisplay
-                    icon={<BatteryIcon className="text-green-600" />}
-                    label="Energi"
-                    value={displayStats.energy}
-                  />
-                  <StatDisplay
-                    icon={<HeartIcon className="text-pink-600" />}
-                    label="Bahagia"
-                    value={displayStats.happiness}
-                  />
-                  <StatDisplay
-                    icon={<DrumstickIcon className="text-orange-600" />}
-                    label="Lapar"
-                    value={displayStats.hunger}
-                  />
-                </div>
-              </div>
+              <Button onClick={() => pet.isSleeping ? mutateWakeUpPet({ petId: pet.id }) : mutateLetPetSleep({ petId: pet.id })} disabled={isWakingUp || isSleeping} className={`${actionButtonClass} col-span-3 ${pet.isSleeping ? 'bg-yellow-400 hover:bg-yellow-500 animate-pulse-bg' : 'bg-indigo-500 hover:bg-indigo-600'} text-white`}>
+                {isWakingUp || isSleeping ? <Loader2Icon className="w-4 h-4 animate-spin" /> : (pet.isSleeping ? <><ZapIcon className="w-4 h-4 mr-1"/>Bangun!</> : <><BedIcon className="w-4 h-4 mr-1"/>Tidur</>)}
+              </Button>
 
-              {/* Action Buttons */}
-              <div className="space-y-3 pt-2">
-                <Button
-                  onClick={() => mutateLevelUp({ petId: pet.id })}
-                  disabled={!canLevelUp || isAnyActionPending}
-                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black py-6 text-lg shadow-lg transition-transform hover:scale-105 border-2 border-white/30 rounded-none"
-                >
-                  {isLevelingUp ? (
-                    <Loader2Icon className="mr-2 h-5 w-5 animate-spin" />
-                  ) : (
-                    <ChevronUpIcon className="mr-2 h-5 w-5" />
-                  )}
-                  Naik Level!
-                </Button>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <ActionButton
-                    onClick={() => mutateFeedPet({ petId: pet.id })}
-                    disabled={!canFeed || isAnyActionPending}
-                    isPending={isFeeding}
-                    label="Makan"
-                    icon={<DrumstickIcon className="w-5 h-5" />}
-                  />
-                  <ActionButton
-                    onClick={() => mutatePlayWithPet({ petId: pet.id })}
-                    disabled={!canPlay || isAnyActionPending}
-                    isPending={isPlaying}
-                    label="Main"
-                    icon={<PlayIcon className="w-5 h-5" />}
-                  />
-                </div>
-
-                <ActionButton
-                  onClick={() => mutateWorkForCoins({ petId: pet.id })}
-                  disabled={!canWork || isAnyActionPending}
-                  isPending={isWorking}
-                  label="Bekerja"
-                  icon={<BriefcaseIcon className="w-5 h-5" />}
-                />
-
-                {pet.isSleeping ? (
-                  <Button
-                    onClick={() => mutateWakeUpPet({ petId: pet.id })}
-                    disabled={isWakingUp}
-                    className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-black py-6 text-lg shadow-lg transition-transform hover:scale-105 border-2 border-white/30 rounded-none"
-                  >
-                    {isWakingUp ? (
-                      <Loader2Icon className="mr-2 h-5 w-5 animate-spin" />
-                    ) : (
-                      <ZapIcon className="mr-2 h-5 w-5" />
-                    )}
-                    Bangun!
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => mutateLetPetSleep({ petId: pet.id })}
-                    disabled={isAnyActionPending}
-                    className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-black py-6 text-lg shadow-lg transition-transform hover:scale-105 border-2 border-white/30 rounded-none"
-                  >
-                    {isSleeping ? (
-                      <Loader2Icon className="mr-2 h-5 w-5 animate-spin" />
-                    ) : (
-                      <BedIcon className="mr-2 h-5 w-5" />
-                    )}
-                    Tidur
-                  </Button>
-                )}
-              </div>
+               <Button onClick={() => mutateLevelUp({ petId: pet.id })} disabled={!canLevelUp || isAnyActionPending} className={`${actionButtonClass} col-span-3 bg-green-500 hover:bg-green-600 text-white ${canLevelUp && 'animate-pulse'}`}>
+                {isLevelingUp ? <Loader2Icon className="w-4 h-4 animate-spin" /> : <><ChevronUpIcon className="w-4 h-4 mr-1"/>Naik Level!</>}
+              </Button>
             </div>
           </CardContent>
-          <WardrobeManager pet={pet} isAnyActionPending={isAnyActionPending || pet.isSleeping} />
+          <WardrobeManager pet={pet} isAnyActionPending={isAnyActionPending} />
         </Card>
       </div>
     </TooltipProvider>

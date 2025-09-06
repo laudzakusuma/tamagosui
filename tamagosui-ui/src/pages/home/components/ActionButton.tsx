@@ -21,10 +21,10 @@ export function ActionButton({
     <Button
       onClick={onClick}
       disabled={disabled}
-      className="w-full bg-primary hover:bg-primary/80 text-white font-bold rounded-xl py-6 text-lg shadow-md transition-all duration-300 transform hover:scale-105"
+      className="w-full bg-primary hover:bg-primary/80 text-white font-bold rounded-none h-9 text-sm shadow-md transition-all duration-300 transform hover:scale-105"
     >
       {isPending ? (
-        <Loader2Icon className="mr-2 h-5 w-5 animate-spin" />
+        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
       ) : (
         <span className="mr-2">{icon}</span>
       )}
