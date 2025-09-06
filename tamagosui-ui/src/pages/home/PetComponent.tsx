@@ -80,7 +80,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
   return (
     <TooltipProvider>
       <div className="animate-float">
-        <Card className="w-80 shadow-lg border-2 border-white/30 bg-white/80 backdrop-blur-lg rounded-xl animate-fade-in">
+        <Card className="w-80 shadow-2xl border-2 border-white/30 bg-white/20 backdrop-blur-xl rounded-xl animate-fade-in">
           <CardContent className="p-3 space-y-3">
             {/* Top Section */}
             <div className="flex gap-3 items-center">

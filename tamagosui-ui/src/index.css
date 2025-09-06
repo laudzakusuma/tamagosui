@@ -19,12 +19,14 @@
   --border: #cbd5e1;
   --input: #e2e8f0;
   --ring: #a78bfa; /* Ungu muda */
+  --navbar-text: #000000;
 }
 
+/* MODIFIED: Warna dark mode dibuat lebih gelap */
 .dark {
-  --background: #1e293b;
+  --background: #0f172a; /* Slate 900 */
   --foreground: #f8fafc;
-  --card: #293548;
+  --card: #1e293b; /* Slate 800 */
   --card-foreground: #f8fafc;
   --popover: #1e293b;
   --popover-foreground: #f8fafc;
@@ -40,6 +42,7 @@
   --border: #475569;
   --input: #475569;
   --ring: #c4b5fd;
+  --navbar-text: #ffffff;
 }
 
 @layer base {
@@ -47,22 +50,22 @@
     @apply border-[var(--border)];
   }
   body, html {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
     font-family: 'Nunito', sans-serif;
     height: 100%;
-    overflow: hidden; /* Mencegah scroll di level body */
+    overflow: hidden;
   }
 }
 
-/* Animasi untuk kartu (naik-turun) */
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
   100% { transform: translateY(0px); }
 }
 
 .animate-float {
-  animation: float 5s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
 /* Animasi untuk background gradien */

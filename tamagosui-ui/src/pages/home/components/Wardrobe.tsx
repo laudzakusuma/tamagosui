@@ -70,17 +70,20 @@ export function WardrobeManager({ pet, isAnyActionPending }: WardrobeManagerProp
   };
 
   return (
-    <div className="px-3 pb-3">
-      <div className="bg-white/50 rounded-none p-1">
+    <div className="px-6 pb-6">
+      <div className="bg-white/50 dark:bg-slate-800/50 rounded-xl p-1">
         <div 
-          className="flex justify-between items-center p-2 cursor-pointer"
+          className="flex justify-between items-center p-3 cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <h3 className="font-bold text-md text-gray-700">WARDROBE</h3>
-          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          {/* MODIFIED: Menambahkan dark:text-slate-200 */}
+          <h3 className="font-bold text-lg text-gray-700 dark:text-slate-200">WARDROBE</h3>
+          <div className="text-gray-700 dark:text-slate-200">
+            {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+          </div>
         </div>
         {isOpen && (
-          <div className="p-2 border-t-2 border-white/50">
+          <div className="p-3">
             {renderContent()}
           </div>
         )}

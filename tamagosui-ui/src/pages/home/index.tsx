@@ -9,6 +9,7 @@ export default function HomePage() {
   const { data: ownedPet, isPending: isOwnedPetLoading } = useQueryOwnedPet();
 
   return (
+    // MODIFIED: Menambahkan div dengan latar belakang beranimasi
     <div className="relative w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full animated-gradient-background -z-10"></div>
       <Header />
