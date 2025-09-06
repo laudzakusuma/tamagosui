@@ -24,48 +24,50 @@ export default function AdoptComponent() {
   };
 
   return (
-    <Card className="w-full max-w-sm text-center shadow-lg border-2 border-primary transform transition-transform hover:scale-105">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold">ADOPSI PET-MU</CardTitle>
-        <CardDescription>Teman barumu menunggu!</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div>
-          <img
-            src={INTIAAL_PET_IMAGE_URL}
-            alt="Your new pet"
-            className="w-40 h-40 mx-auto image-rendering-pixelated bg-secondary p-2 border-2 border-primary rounded-full animate-float"
-          />
-        </div>
+    <div className="w-full max-w-sm relative overflow-hidden rounded-lg shadow-lg animated-gradient-background">
+      <Card className="bg-card/90 border-none w-full h-full p-4">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-bold">ADOPSI PET-MU</CardTitle>
+          <CardDescription>Teman barumu menunggu!</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <img
+              src={INTIAAL_PET_IMAGE_URL}
+              alt="Your new pet"
+              className="w-40 h-40 mx-auto image-rendering-pixelated bg-secondary p-2 border-2 border-primary rounded-full animate-float"
+            />
+          </div>
 
-        <div className="space-y-2">
-          <p className="text-lg">Siapa namanya?</p>
-          <Input
-            value={petName}
-            onChange={(e) => setPetName(e.target.value)}
-            placeholder="Masukkan nama pet"
-            disabled={isAdopting}
-            className="text-center text-lg border-2 border-primary focus:ring-2 focus:ring-offset-2 focus:ring-ring"
-          />
-        </div>
+          <div className="space-y-2">
+            <p className="text-lg">Siapa namanya?</p>
+            <Input
+              value={petName}
+              onChange={(e) => setPetName(e.target.value)}
+              placeholder="Masukkan nama pet"
+              disabled={isAdopting}
+              className="text-center text-lg border-2 border-primary focus:ring-2 focus:ring-offset-2 focus:ring-ring"
+            />
+          </div>
 
-        <div>
-          <Button
-            onClick={handleAdoptPet}
-            disabled={!petName.trim() || isAdopting}
-            className="w-full text-lg py-6 border-2 border-primary shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transform transition-transform hover:scale-105"
-          >
-            {isAdopting ? (
-              <>
-                <Loader2Icon className="mr-2 h-5 w-5 animate-spin" />{" "}
-                Mengadopsi...
-              </>
-            ) : (
-              "ADOPSI SEKARANG"
-            )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          <div>
+            <Button
+              onClick={handleAdoptPet}
+              disabled={!petName.trim() || isAdopting}
+              className="w-full text-lg py-6 border-2 border-primary shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transform transition-transform hover:scale-105"
+            >
+              {isAdopting ? (
+                <>
+                  <Loader2Icon className="mr-2 h-5 w-5 animate-spin" />{" "}
+                  Mengadopsi...
+                </>
+              ) : (
+                "ADOPSI SEKARANG"
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

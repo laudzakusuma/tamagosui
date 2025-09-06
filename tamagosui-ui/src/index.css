@@ -135,3 +135,22 @@
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
+
+/* Animasi untuk background gradien */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient-background {
+  background: linear-gradient(-45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
