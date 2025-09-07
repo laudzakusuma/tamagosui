@@ -32,6 +32,8 @@ export function normalizeSuiPetObject(
     mood: fields.mood,
     aura: fields.aura,
     aura_expiration: Number(fields.aura_expiration),
+    // PERBAIKAN: Menambahkan field personality yang hilang
+    personality: fields.personality, 
     adopted_at: Number(fields.adopted_at),
     stats: {
       energy: fields.stats.fields.energy,

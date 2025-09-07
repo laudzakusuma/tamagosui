@@ -9,14 +9,14 @@ export default function Header() {
           <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
             <span className="text-2xl">🐾</span>
           </div>
-          {/* MODIFIED: Menggunakan variabel CSS untuk warna teks navbar */}
+          {/* PERUBAHAN DI SINI */}
           <h1 className="text-3xl font-black tracking-tighter" style={{ color: 'var(--navbar-text)' }}>
-            TAMAGOSUI
+            LEO
           </h1>
         </div>
         
-        <div className="flex items-center gap-4"> {/* Menambahkan gap */}
-          <DarkModeToggle /> {/* Tombol Dark Mode */}
+        <div className="flex items-center gap-4">
+          <DarkModeToggle />
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-1 border border-white/20">
             <ConnectButton />
           </div>

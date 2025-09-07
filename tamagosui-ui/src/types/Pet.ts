@@ -18,6 +18,7 @@ export type PetStruct = {
   mood: string;
   aura: string;
   aura_expiration: number;
+  personality: string; // <-- Tambahkan ini
   stats: PetStructStats;
   game_data: PetStructGameData;
   isSleeping: boolean;
@@ -44,6 +45,7 @@ export type RawPetStructFields = {
   mood: string;
   aura: string;
   aura_expiration: string;
+  personality: string; // <-- Tambahkan ini
   adopted_at: string;
   stats: { fields: { energy: number; happiness: number; hunger: number } };
   game_data: { fields: { coins: number; experience: number; level: number } };

@@ -1,0 +1,9 @@
+elevenlabs
+pyaudio
+openai
+dotenv
+pillow
+langchain_community
+fastapi
+uvicorn[standard]
+pydantic
