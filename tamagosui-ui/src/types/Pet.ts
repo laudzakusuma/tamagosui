@@ -15,10 +15,11 @@ export type PetStruct = {
   name: string;
   adopted_at: number;
   image_url: string;
+  mood: string;
+  aura: string;
+  aura_expiration: number;
   stats: PetStructStats;
   game_data: PetStructGameData;
-
-  // Dynamic Fields
   isSleeping: boolean;
 };
 
@@ -40,6 +41,9 @@ export type RawPetStructFields = {
   id: { id: string };
   name: string;
   image_url: string;
+  mood: string;
+  aura: string;
+  aura_expiration: string;
   adopted_at: string;
   stats: { fields: { energy: number; happiness: number; hunger: number } };
   game_data: { fields: { coins: number; experience: number; level: number } };

@@ -10,49 +10,49 @@ import { toast } from "sonner";
 import { queryKeyOwnedPet } from "./useQueryOwnedPet";
 import { CLOCK_ID, MODULE_NAME, PACKAGE_ID } from "@/constants/contract";
 
-const mutateKeyPlayWithPet = ["mutate", "play-with-pet"];
+const mutateKeyBertualang = ["mutate", "bertualang"];
 
-type UseMutatePlayWithPetParams = {
+type UseMutateBertualangParams = {
   petId: string;
-  petName: string;
 };
 
-export function useMutatePlayWithPet() {
+export function useMutateBertualang() {
   const currentAccount = useCurrentAccount();
   const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
   const suiClient = useSuiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: mutateKeyPlayWithPet,
-    mutationFn: async ({ petId }: UseMutatePlayWithPetParams) => {
+    mutationKey: mutateKeyBertualang,
+    mutationFn: async ({ petId }: UseMutateBertualangParams) => {
       if (!currentAccount) throw new Error("No connected account");
 
       const tx = new Transaction();
       tx.moveCall({
-        target: `${PACKAGE_ID}::${MODULE_NAME}::play_with_pet`,
+        target: `${PACKAGE_ID}::${MODULE_NAME}::bertualang`,
         arguments: [tx.object(petId), tx.object(CLOCK_ID)],
       });
 
       const { digest } = await signAndExecute({ transaction: tx });
       const response = await suiClient.waitForTransaction({
         digest,
-        options: { showEffects: true },
+        options: { showEffects: true, showEvents: true },
       });
       if (response?.effects?.status.status === "failure")
         throw new Error(response.effects.status.error);
 
       return response;
     },
-    onSuccess: (response, { petName }) => {
-      toast.success(`Kamu bermain dengan ${petName}!`, {
+    onSuccess: (response) => {
+      toast.success("Petualangan berhasil! Aura baru didapatkan!", {
         description: `Tx: ${response.digest.slice(0, 10)}...`,
       });
+
       queryClient.invalidateQueries({ queryKey: queryKeyOwnedPet() });
     },
     onError: (error) => {
-      console.error("Error playing with pet:", error);
-      toast.error(`Gagal bermain: ${error.message}`);
+      console.error("Error during adventure:", error);
+      toast.error(`Petualangan Gagal: ${error.message}`);
     },
   });
 }

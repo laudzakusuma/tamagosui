@@ -80,3 +80,12 @@
   background-size: 400% 400%;
   animation: gradient-shift 20s ease infinite;
 }
+
+@keyframes breathing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.animate-breathing {
+  animation: breathing 3s ease-in-out infinite;
+} 

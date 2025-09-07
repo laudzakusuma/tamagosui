@@ -8,12 +8,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { queryKeyOwnedPet } from "./useQueryOwnedPet";
-import { MODULE_NAME, PACKAGE_ID } from "@/constants/contract";
+import { CLOCK_ID, MODULE_NAME, PACKAGE_ID } from "@/constants/contract";
 
 const mutateKeyWorkForCoins = ["mutate", "work-for-coins"];
 
 type UseMutateWorkForCoins = {
   petId: string;
+  petName: string;
 };
 
 export function useMutateWorkForCoins() {
@@ -30,7 +31,7 @@ export function useMutateWorkForCoins() {
       const tx = new Transaction();
       tx.moveCall({
         target: `${PACKAGE_ID}::${MODULE_NAME}::work_for_coins`,
-        arguments: [tx.object(petId)],
+        arguments: [tx.object(petId), tx.object(CLOCK_ID)],
       });
 
       const { digest } = await signAndExecute({ transaction: tx });
@@ -43,13 +44,15 @@ export function useMutateWorkForCoins() {
 
       return response;
     },
-    onSuccess: (response) => {
-      toast.success(`Your pet worked for coins! Tx: ${response.digest}`);
+    onSuccess: (response, { petName }) => {
+      toast.success(`${petName} bekerja dan mendapatkan koin!`, {
+        description: `Tx: ${response.digest.slice(0, 10)}...`,
+      });
       queryClient.invalidateQueries({ queryKey: queryKeyOwnedPet() });
     },
     onError: (error) => {
       console.error("Error working for coins:", error);
-      toast.error(`Error working for coins: ${error.message}`);
+      toast.error(`Gagal bekerja: ${error.message}`);
     },
   });
 }

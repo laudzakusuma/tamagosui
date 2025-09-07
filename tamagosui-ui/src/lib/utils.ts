@@ -1,11 +1,10 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 import type { SuiObjectResponse } from "@mysten/sui/client";
 import type { RawPetStructFields, PetStruct } from "@/types/Pet";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 
 export function getSuiObjectFields<T>(object: SuiObjectResponse): T | null {
@@ -22,7 +21,7 @@ export function getSuiObjectFields<T>(object: SuiObjectResponse): T | null {
 
 export function normalizeSuiPetObject(
   object: SuiObjectResponse,
-): PetStruct | null {
+): Omit<PetStruct, "isSleeping"> | null {
   const fields = getSuiObjectFields<RawPetStructFields>(object);
   if (!fields) return null;
 
@@ -30,6 +29,9 @@ export function normalizeSuiPetObject(
     id: fields.id.id,
     name: fields.name,
     image_url: fields.image_url,
+    mood: fields.mood,
+    aura: fields.aura,
+    aura_expiration: Number(fields.aura_expiration),
     adopted_at: Number(fields.adopted_at),
     stats: {
       energy: fields.stats.fields.energy,
@@ -41,14 +43,14 @@ export function normalizeSuiPetObject(
       experience: Number(fields.game_data.fields.experience),
       level: fields.game_data.fields.level,
     },
-  } as PetStruct;
+  };
 }
 
 export function getTimeSinceAdoption(adoptedAt: number) {
   if (!adoptedAt) return "Just adopted";
 
   const now = new Date();
-  const adopted = new Date(adoptedAt); // Already milliseconds in Sui
+  const adopted = new Date(adoptedAt);
 
   const diff = now.getTime() - adopted.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));

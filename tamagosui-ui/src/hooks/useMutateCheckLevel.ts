@@ -12,8 +12,12 @@ import { MODULE_NAME, PACKAGE_ID } from "@/constants/contract";
 
 const mutateKeyCheckAndLevelUp = ["mutate", "check-and-level-up"];
 
+const EVOLUTION_LEVEL = 3;
+
 type UseMutateCheckAndLevelUp = {
   petId: string;
+  currentLevel: number;
+  petName: string;
 };
 
 export function useMutateCheckAndLevelUp() {
@@ -43,13 +47,24 @@ export function useMutateCheckAndLevelUp() {
 
       return response;
     },
-    onSuccess: (response) => {
-      toast.success(`Level up pet successfully! Tx: ${response.digest}`);
+    onSuccess: (response, { petName, currentLevel }) => {
+      const newLevel = currentLevel + 1;
+      let toastMessage = `Selamat! ${petName} naik ke Level ${newLevel}!`;
+      
+      if (newLevel === EVOLUTION_LEVEL) {
+        toastMessage = `✨ LUAR BIASA! ${petName} telah berevolusi! ✨`;
+      }
+      
+      toast.success(toastMessage, {
+        description: `Tx: ${response.digest.slice(0, 10)}...`,
+        duration: 5000,
+      });
+
       queryClient.invalidateQueries({ queryKey: queryKeyOwnedPet() });
     },
     onError: (error) => {
-      console.error("Error feeding pet:", error);
-      toast.error(`Error checking pet level: ${error.message}`);
+      console.error("Error leveling up pet:", error);
+      toast.error(`Gagal naik level: ${error.message}`);
     },
   });
 }

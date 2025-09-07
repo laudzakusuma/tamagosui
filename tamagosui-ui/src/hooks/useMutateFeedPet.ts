@@ -8,12 +8,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { queryKeyOwnedPet } from "./useQueryOwnedPet";
-import { MODULE_NAME, PACKAGE_ID } from "@/constants/contract";
+import { CLOCK_ID, MODULE_NAME, PACKAGE_ID } from "@/constants/contract";
+import { useQueryGameBalance } from "./useQueryGameBalance";
 
 const mutateKeyFeedPet = ["mutate", "feed-pet"];
 
 type UseMutateFeedPetParams = {
   petId: string;
+  petName: string;
 };
 
 export function useMutateFeedPet() {
@@ -21,6 +23,7 @@ export function useMutateFeedPet() {
   const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
   const suiClient = useSuiClient();
   const queryClient = useQueryClient();
+  const { data: gameBalance } = useQueryGameBalance();
 
   return useMutation({
     mutationKey: mutateKeyFeedPet,
@@ -30,7 +33,7 @@ export function useMutateFeedPet() {
       const tx = new Transaction();
       tx.moveCall({
         target: `${PACKAGE_ID}::${MODULE_NAME}::feed_pet`,
-        arguments: [tx.object(petId)],
+        arguments: [tx.object(petId), tx.object(CLOCK_ID)],
       });
 
       const { digest } = await signAndExecute({ transaction: tx });
@@ -43,8 +46,14 @@ export function useMutateFeedPet() {
 
       return response;
     },
-    onSuccess: (response) => {
-      toast.success(`Pet fed successfully! Tx: ${response.digest}`);
+    onSuccess: (response, { petName }) => {
+      const hungerGain = gameBalance?.feed_hunger_gain || 20;
+      toast.success(
+        `Yummy! Kamu memberi makan ${petName}. Hunger +${hungerGain}.`,
+        {
+          description: `Tx: ${response.digest.slice(0, 10)}...`,
+        },
+      );
 
       queryClient.invalidateQueries({ queryKey: queryKeyOwnedPet() });
     },
