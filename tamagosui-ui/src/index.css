@@ -22,11 +22,10 @@
   --navbar-text: #000000;
 }
 
-/* MODIFIED: Warna dark mode dibuat lebih gelap */
 .dark {
-  --background: #0f172a; /* Slate 900 */
+  --background: #0f172a;
   --foreground: #f8fafc;
-  --card: #1e293b; /* Slate 800 */
+  --card: #1e293b;
   --card-foreground: #f8fafc;
   --popover: #1e293b;
   --popover-foreground: #f8fafc;
@@ -68,7 +67,6 @@
   animation: float 4s ease-in-out infinite;
 }
 
-/* Animasi untuk background gradien */
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -88,4 +86,14 @@
 
 .animate-breathing {
   animation: breathing 3s ease-in-out infinite;
-} 
+}
+
+/* === TAMBAHKAN KODE AURA DI SINI === */
+@layer utilities {
+  .aura-coin-magnet {
+    @apply shadow-[0_0_20px_5px] shadow-yellow-400/80 animate-aura-glow;
+  }
+  .aura-xp-boost {
+    @apply shadow-[0_0_20px_5px] shadow-purple-400/80 animate-aura-glow;
+  }
+}

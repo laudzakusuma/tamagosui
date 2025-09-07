@@ -12,8 +12,10 @@ import { CLOCK_ID, MODULE_NAME, PACKAGE_ID } from "@/constants/contract";
 
 const mutateKeyBertualang = ["mutate", "bertualang"];
 
+// === PERBAIKAN: Tambahkan petName ke tipe data ===
 type UseMutateBertualangParams = {
   petId: string;
+  petName: string; 
 };
 
 export function useMutateBertualang() {
@@ -43,16 +45,19 @@ export function useMutateBertualang() {
 
       return response;
     },
-    onSuccess: (response) => {
-      toast.success("Petualangan berhasil! Aura baru didapatkan!", {
-        description: `Tx: ${response.digest.slice(0, 10)}...`,
-      });
-
+    // === PERBAIKAN: Perbarui onSuccess untuk notifikasi yang lebih baik ===
+    onSuccess: (response, { petName }) => {
+      toast.success(
+        `Petualangan ${petName} berhasil! Aura kekuatan didapatkan!`,
+        {
+          description: `Tx: ${response.digest.slice(0, 10)}...`,
+        },
+      );
       queryClient.invalidateQueries({ queryKey: queryKeyOwnedPet() });
     },
     onError: (error) => {
-      console.error("Error during adventure:", error);
-      toast.error(`Petualangan Gagal: ${error.message}`);
+      console.error("Error adventuring:", error);
+      toast.error(`Petualangan gagal: ${error.message}`);
     },
   });
 }

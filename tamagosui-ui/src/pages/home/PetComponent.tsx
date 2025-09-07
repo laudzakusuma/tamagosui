@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatDisplay } from "./components/StatDisplay";
 import { WardrobeManager } from "./components/Wardrobe";
+import { DreamBubble } from "./components/DreamBubble";
 import { useMutateCheckAndLevelUp } from "@/hooks/useMutateCheckLevel";
 import { useMutateFeedPet } from "@/hooks/useMutateFeedPet";
 import { useMutateLetPetSleep } from "@/hooks/useMutateLetPetSleep";
@@ -101,11 +102,10 @@ export default function PetComponent({ pet }: PetDashboardProps) {
   
   const actionButtonClass = "w-full h-9 text-xs font-bold rounded-md shadow-sm border transition-transform transform hover:scale-105 active:scale-95";
 
-  // === FUNGSI INI KUNCI UTAMA TAMPILAN AURA ===
   const getAuraClassName = () => {
     if (!isAuraActive) return "";
-    if (pet.aura === "Coin Magnet") return "shadow-[0_0_20px_5px] shadow-yellow-400/80 animate-aura-glow";
-    if (pet.aura === "XP Boost") return "shadow-[0_0_20px_5px] shadow-purple-400/80 animate-aura-glow";
+    if (pet.aura === "Coin Magnet") return "aura-coin-magnet";
+    if (pet.aura === "XP Boost") return "aura-xp-boost";
     return "";
   };
 
@@ -115,9 +115,11 @@ export default function PetComponent({ pet }: PetDashboardProps) {
         <Card className="w-80 shadow-2xl border-2 border-white/30 bg-white/20 backdrop-blur-xl rounded-xl animate-fade-in">
           <CardContent className="p-3 space-y-3">
             <div className="flex gap-3 items-center">
-              {/* === TERAPKAN KELAS AURA DI SINI === */}
-              <div className={`w-24 h-24 flex-shrink-0 bg-purple-200 p-1.5 rounded-md shadow-inner transition-all duration-500 ${getAuraClassName()}`}>
-                <img src={pet.image_url} alt={pet.name} className="w-full h-full object-cover rounded-sm animate-breathing" />
+              <div className="relative">
+                <div className={`w-24 h-24 flex-shrink-0 bg-purple-200 p-1.5 rounded-md shadow-inner transition-all duration-500 ${getAuraClassName()}`}>
+                  <img src={pet.image_url} alt={pet.name} className="w-full h-full object-cover rounded-sm animate-breathing" />
+                </div>
+                {pet.isSleeping && <DreamBubble />}
               </div>
               <div className="flex flex-col flex-1 space-y-2">
                  <div>
@@ -131,8 +133,18 @@ export default function PetComponent({ pet }: PetDashboardProps) {
                   </div>
                 </div>
                  <div className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-1 font-bold bg-yellow-100 px-2 py-0.5 rounded"><CoinsIcon className="w-3 h-3 text-yellow-600" /> {pet.game_data.coins}</span>
-                    <span className="flex items-center gap-1 font-bold bg-purple-100 px-2 py-0.5 rounded">{pet.game_data.experience} <StarIcon className="w-3 h-3 text-purple-600" /></span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                         <span className="flex items-center gap-1 font-bold bg-yellow-100 px-2 py-0.5 rounded"><CoinsIcon className="w-3 h-3 text-yellow-600" /> {pet.game_data.coins}</span>
+                      </TooltipTrigger>
+                      <TooltipContent><p>Koin</p></TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                       <TooltipTrigger asChild>
+                          <span className="flex items-center gap-1 font-bold bg-purple-100 px-2 py-0.5 rounded">{pet.game_data.experience} <StarIcon className="w-3 h-3 text-purple-600" /></span>
+                       </TooltipTrigger>
+                       <TooltipContent><p>Experience Points (XP)</p></TooltipContent>
+                    </Tooltip>
                 </div>
                  {isAuraActive && (
                     <div className="text-xs font-bold bg-white/50 text-slate-800 px-2 py-1 rounded-md text-center">
@@ -159,7 +171,7 @@ export default function PetComponent({ pet }: PetDashboardProps) {
                <Button onClick={() => mutateWorkForCoins({ petId: pet.id, petName: pet.name })} disabled={!canWork || isAnyActionPending} className={actionButtonClass}>
                 {isWorking ? <Loader2Icon className="w-4 h-4 animate-spin" /> : <BriefcaseIcon className="w-4 h-4"/>}
               </Button>
-              <Button onClick={() => mutateBertualang({ petId: pet.id })} disabled={!canAdventure || isAnyActionPending} className={`${actionButtonClass} col-span-3 bg-teal-500 hover:bg-teal-600 text-white`}>
+              <Button onClick={() => mutateBertualang({ petId: pet.id, petName: pet.name })} disabled={!canAdventure || isAnyActionPending} className={`${actionButtonClass} col-span-3 bg-teal-500 hover:bg-teal-600 text-white`}>
                 {isAdventuring ? <Loader2Icon className="w-4 h-4 animate-spin" /> : <><CompassIcon className="w-4 h-4 mr-1"/>Bertualang</>}
               </Button>
               <Button onClick={() => pet.isSleeping ? mutateWakeUpPet({ petId: pet.id }) : mutateLetPetSleep({ petId: pet.id })} disabled={isWakingUp || isSleeping || isAnyActionPending} className={`${actionButtonClass} col-span-3 ${pet.isSleeping ? 'bg-yellow-400 hover:bg-yellow-500 animate-pulse-bg' : 'bg-indigo-500 hover:bg-indigo-600'} text-white`}>

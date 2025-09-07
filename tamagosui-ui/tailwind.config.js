@@ -37,6 +37,10 @@ export default {
         'aura-glow': {
           '0%, 100%': { opacity: 0.7 },
           '50%': { opacity: 1 },
+        },
+        'dream-fade': {
+          '0%, 100%': { opacity: 0, transform: 'scale(0.9)' },
+          '20%, 80%': { opacity: 1, transform: 'scale(1)' },
         }
       },
       animation: {
@@ -45,8 +49,8 @@ export default {
         'breathing': 'breathing 3s ease-in-out infinite',
         'rotate-in': 'rotate-in 0.3s ease-out forwards',
         'rotate-out': 'rotate-out 0.3s ease-out forwards',
-        // === TAMBAHKAN ANIMASI BARU INI ===
         'aura-glow': 'aura-glow 2.5s ease-in-out infinite',
+        'dream-fade': 'dream-fade 3s ease-in-out infinite',
       }
     },
   },
