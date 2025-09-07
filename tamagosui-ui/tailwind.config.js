@@ -1,3 +1,5 @@
+import plugin from 'tailwindcss/plugin'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -25,15 +27,7 @@ export default {
           '0%, 100%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.03)' },
         },
-        'rotate-in': {
-          '0%': { transform: 'rotate(-180deg) scale(0.5)', opacity: '0' },
-          '100%': { transform: 'rotate(0deg) scale(1)', opacity: '1' },
-        },
-        'rotate-out': {
-          '0%': { transform: 'rotate(0deg) scale(1)', opacity: '1' },
-          '100%': { transform: 'rotate(180deg) scale(0.5)', opacity: '0' },
-        },
-        // === TAMBAHKAN KEYFRAME BARU INI ===
+        // Keyframe aura-glow dipindahkan ke sini
         'aura-glow': {
           '0%, 100%': { opacity: 0.7 },
           '50%': { opacity: 1 },
@@ -47,12 +41,22 @@ export default {
         'fade-in': 'fade-in 0.3s ease-out forwards',
         'pulse-bg': 'pulse-bg 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'breathing': 'breathing 3s ease-in-out infinite',
-        'rotate-in': 'rotate-in 0.3s ease-out forwards',
-        'rotate-out': 'rotate-out 0.3s ease-out forwards',
+        // Animasi aura-glow juga tetap di sini
         'aura-glow': 'aura-glow 2.5s ease-in-out infinite',
         'dream-fade': 'dream-fade 3s ease-in-out infinite',
       }
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function({ addUtilities }) {
+      addUtilities({
+        '.aura-coin-magnet': {
+          '@apply shadow-[0_0_20px_5px] shadow-yellow-400/80 animate-aura-glow': {},
+        },
+        '.aura-xp-boost': {
+          '@apply shadow-[0_0_20px_5px] shadow-purple-400/80 animate-aura-glow': {},
+        }
+      })
+    })
+  ],
 }

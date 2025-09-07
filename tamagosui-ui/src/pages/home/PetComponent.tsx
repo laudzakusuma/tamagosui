@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   CoinsIcon, HeartIcon, StarIcon, Loader2Icon, BatteryIcon,
   DrumstickIcon, PlayIcon, BedIcon, BriefcaseIcon, ZapIcon,
-  ChevronUpIcon, CompassIcon, SparklesIcon,
+  ChevronUpIcon, CompassIcon, SparklesIcon, ArrowUpCircle, SunIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { StatDisplay } from "./components/StatDisplay";
 import { WardrobeManager } from "./components/Wardrobe";
 import { DreamBubble } from "./components/DreamBubble";
+import { WeatherDisplay } from "./components/WeatherDisplay";
 import { useMutateCheckAndLevelUp } from "@/hooks/useMutateCheckLevel";
 import { useMutateFeedPet } from "@/hooks/useMutateFeedPet";
 import { useMutateLetPetSleep } from "@/hooks/useMutateLetPetSleep";
@@ -19,8 +20,9 @@ import { useMutateWorkForCoins } from "@/hooks/useMutateWorkForCoins";
 import { useQueryGameBalance } from "@/hooks/useQueryGameBalance";
 import { useMutateBertualang } from "@/hooks/useMutateBertualang";
 import type { PetStruct } from "@/types/Pet";
+import type { WeatherType } from "../index";
 
-type PetDashboardProps = { pet: PetStruct };
+type PetDashboardProps = { pet: PetStruct; currentWeather: WeatherType };
 
 const AuraCountdown = ({ expiration }: { expiration: number }) => {
   const calculateTimeLeft = () => {
@@ -52,7 +54,7 @@ const AuraCountdown = ({ expiration }: { expiration: number }) => {
   );
 };
 
-export default function PetComponent({ pet }: PetDashboardProps) {
+export default function PetComponent({ pet, currentWeather }: PetDashboardProps) {
   const { data: gameBalance, isLoading: isLoadingGameBalance } = useQueryGameBalance();
   const [displayStats, setDisplayStats] = useState(pet.stats);
   
@@ -112,7 +114,8 @@ export default function PetComponent({ pet }: PetDashboardProps) {
   return (
     <TooltipProvider>
       <div className="animate-float">
-        <Card className="w-80 shadow-2xl border-2 border-white/30 bg-white/20 backdrop-blur-xl rounded-xl animate-fade-in">
+        <Card className="relative w-80 shadow-2xl border-2 border-white/30 bg-white/20 backdrop-blur-xl rounded-xl animate-fade-in">
+          <WeatherDisplay currentWeather={currentWeather} />
           <CardContent className="p-3 space-y-3">
             <div className="flex gap-3 items-center">
               <div className="relative">
@@ -156,9 +159,23 @@ export default function PetComponent({ pet }: PetDashboardProps) {
             </div>
             
             <div className="space-y-1.5">
-              <StatDisplay icon={<BatteryIcon className="w-4 h-4 text-green-500" />} label="Energi" value={displayStats.energy} />
-              <StatDisplay icon={<HeartIcon className="w-4 h-4 text-pink-500" />} label="Bahagia" value={displayStats.happiness} />
-              <StatDisplay icon={<DrumstickIcon className="w-4 h-4 text-orange-500" />} label="Lapar" value={displayStats.hunger} />
+              <StatDisplay 
+                icon={<BatteryIcon className="w-4 h-4 text-green-500" />} 
+                label="Energi" 
+                value={displayStats.energy}
+                weatherEffect={currentWeather === 'Rainy' ? { icon: <ArrowUpCircle className="w-3 h-3 text-green-600" />, text: 'Hemat Energi!' } : undefined}
+              />
+              <StatDisplay 
+                icon={<HeartIcon className="w-4 h-4 text-pink-500" />} 
+                label="Bahagia" 
+                value={displayStats.happiness}
+                weatherEffect={currentWeather === 'Sunny' ? { icon: <SunIcon className="w-3 h-3 text-yellow-600" />, text: 'Lebih Ceria!' } : undefined}
+              />
+              <StatDisplay 
+                icon={<DrumstickIcon className="w-4 h-4 text-orange-500" />} 
+                label="Lapar" 
+                value={displayStats.hunger} 
+              />
             </div>
 
             <div className="grid grid-cols-3 gap-2 pt-1">

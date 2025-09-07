@@ -1,15 +1,35 @@
+import { useState, useEffect } from "react";
 import { useQueryOwnedPet } from "@/hooks/useQueryOwnedPet";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import AdoptComponent from "./AdoptComponent";
 import PetComponent from "./PetComponent";
 import Header from "@/components/Header";
 
+// Definisikan tipe dan urutan cuaca
+export type WeatherType = 'Sunny' | 'Cloudy' | 'Rainy';
+const weatherCycle: WeatherType[] = ['Sunny', 'Cloudy', 'Rainy'];
+
 export default function HomePage() {
   const currentAccount = useCurrentAccount();
   const { data: ownedPet, isPending: isOwnedPetLoading } = useQueryOwnedPet();
+  
+  // State untuk menyimpan cuaca saat ini
+  const [currentWeather, setCurrentWeather] = useState<WeatherType>('Sunny');
+
+  useEffect(() => {
+    // Timer untuk mengganti cuaca setiap 1 menit
+    const weatherTimer = setInterval(() => {
+      setCurrentWeather(prevWeather => {
+        const currentIndex = weatherCycle.indexOf(prevWeather);
+        const nextIndex = (currentIndex + 1) % weatherCycle.length;
+        return weatherCycle[nextIndex];
+      });
+    }, 60000); // Ganti cuaca setiap 60 detik
+
+    return () => clearInterval(weatherTimer); // Bersihkan timer saat komponen unmount
+  }, []);
 
   return (
-    // MODIFIED: Menambahkan div dengan latar belakang beranimasi
     <div className="relative w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full animated-gradient-background -z-10"></div>
       <Header />
@@ -27,7 +47,8 @@ export default function HomePage() {
             </h2>
           </div>
         ) : ownedPet ? (
-          <PetComponent pet={ownedPet} />
+          // Teruskan cuaca saat ini ke PetComponent
+          <PetComponent pet={ownedPet} currentWeather={currentWeather} />
         ) : (
           <AdoptComponent />
         )}
