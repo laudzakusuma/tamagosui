@@ -81,6 +81,7 @@ public struct Pet has key, store {
     mood: String,
     aura: String,
     aura_expiration: u64,
+    personality: String, // Kepribadian untuk AI
     adopted_at: u64,
     stats: PetStats,
     game_data: PetGameData,
@@ -124,6 +125,7 @@ fun init(witness: TAMAGOSUI, ctx: &mut TxContext) {
         string::utf8(b"name"),
         string::utf8(b"image_url"),
         string::utf8(b"mood"),
+        string::utf8(b"personality"), // Tambahkan personality ke display
         string::utf8(b"birth_date"),
         string::utf8(b"experience"),
         string::utf8(b"level"),
@@ -132,6 +134,7 @@ fun init(witness: TAMAGOSUI, ctx: &mut TxContext) {
         string::utf8(b"{name}"),
         string::utf8(b"{image_url}"),
         string::utf8(b"{mood}"),
+        string::utf8(b"{personality}"), // Tambahkan personality ke display
         string::utf8(b"{adopted_at}"),
         string::utf8(b"{game_data.experience}"),
         string::utf8(b"{game_data.level}"),
@@ -176,6 +179,7 @@ public entry fun adopt_pet(
         mood: string::utf8(b"Neutral"),
         aura: string::utf8(b"None"),
         aura_expiration: 0,
+        personality: string::utf8(b"You are a cheerful and helpful pet cat. Your name is the user's pet name. You live inside a fun game on the Sui blockchain."),
         adopted_at: current_time,
         stats: pet_stats,
         game_data: pet_game_data
